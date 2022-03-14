@@ -19,12 +19,11 @@ The output files have the following formats:
 - One free line to put a comment/name. This can also be left blank.
 
 ##### Body
-- Body of textfile consists of one line for each particle with its xy coordinates separated by a space
+- Body of textfile consists of one line for each particle with its radius and then its xy coordinates, all separated by a spaces
 
 **neighbours.txt:**
 
 ##### Header
-- The target cell to display its neighbours
 - One free line to put a comment/name. This can also be left blank.
 
 ##### Body
