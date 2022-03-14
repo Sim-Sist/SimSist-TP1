@@ -15,10 +15,26 @@ public class Particle {
         return index;
     }
 
+    public double distanceTo(Particle p) {
+        double deltaX = this.x - p.x;
+        double deltaY = this.y - p.y;
+        return (Math.sqrt(deltaX * deltaX + deltaY * deltaY)) - (this.radius + p.radius);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Particle))
+            return false;
+        Particle p = (Particle) o;
+        return p.x == x && p.y == y && p.index == index && p.radius == radius;
+    }
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        str.append(String.format("%d: ", index)).append(String.format("%3f  %3f", x, y));
+        str.append(String.format("%d: ", index)).append(String.format("r:%.3f x:%.3f  y:%.3f", radius, x, y));
         return str.toString();
     }
 
