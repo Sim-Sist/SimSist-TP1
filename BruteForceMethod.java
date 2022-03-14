@@ -14,7 +14,7 @@ public class BruteForceMethod {
         for (Particle p : particlesList) {
             particlesList.remove(p);
             for (Particle q : particlesList) {
-                double distance = getDistance(p, q);
+                double distance = p.distanceTo(q);
                 if (distance <= criticalRadius) {
                     neighbours[p.getIndex()].add(q.getIndex());
                     neighbours[q.getIndex()].add(p.getIndex());

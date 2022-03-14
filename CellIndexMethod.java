@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 public class CellIndexMethod {
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
 
     private static int[] cells;
     private static int[] particleRefs;
@@ -16,6 +16,7 @@ public class CellIndexMethod {
     private static Set<Integer> setsProvider() {
         return new HashSet<>();
     }
+
 
     public static Set<Integer>[] apply(double size, double criticalRadius, Particle[] particles) {
         double maxRadius = Arrays.asList(particles).stream().mapToDouble(p -> p.radius).max().getAsDouble();
@@ -31,7 +32,7 @@ public class CellIndexMethod {
         Arrays.setAll(neighbours, (i) -> setsProvider());
 
         if (DEBUG)
-            System.out.println(String.format("CIM:\n\tSpace size: %.3f\n\tCells per side: %d", size, gridSize));
+            System.out.println(String.format("CIM:\n\tSpace size: %.3f\n\tCells per side: %d\n", size, gridSize));
 
         cells = new int[gridSize * gridSize];
         Arrays.fill(cells, -1);
@@ -67,7 +68,7 @@ public class CellIndexMethod {
                     System.out.println(str.toString());
                 }
                 for (int candidate : candidates) {
-                    double distance = getDistance(particles[current], particles[candidate]);
+                    double distance = particles[current].distanceTo(particles[candidate]);
                     if (distance < criticalRadius) {
                         if (DEBUG)
                             System.out.println(String.format("%d and %d are neighbours with distance %f", current,
@@ -119,11 +120,12 @@ public class CellIndexMethod {
         return Math.abs(origin % gridSize - target % gridSize) > 1;
     }
 
-    private static double getDistance(Particle p1, Particle p2) {
-        double deltaX = p1.x - p2.x;
-        double deltaY = p1.y - p2.y;
-        return (Math.sqrt(deltaX * deltaX + deltaY * deltaY)) - (p1.radius + p2.radius);
-    }
+    // private static double getDistance(Particle p1, Particle p2) {
+    // double deltaX = p1.x - p2.x;
+    // double deltaY = p1.y - p2.y;
+    // return (Math.sqrt(deltaX * deltaX + deltaY * deltaY)) - (p1.radius +
+    // p2.radius);
+    // }
 
     private static int getCell(Particle particle, double size) {
         int x = (int) (particle.x / size * gridSize);
@@ -158,7 +160,8 @@ public class CellIndexMethod {
         for (int i = 0; i < neighbours.length; i++) {
             StringBuilder sb = new StringBuilder(i + ": ");
             neighbours[i].forEach(n -> sb.append(n).append(" | "));
-            sb.delete(sb.length() - 3, sb.length());
+            if (neighbours[i].size() > 0)
+                sb.delete(sb.length() - 3, sb.length());
             System.out.println(sb.toString());
         }
 
