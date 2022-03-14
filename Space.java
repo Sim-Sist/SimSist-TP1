@@ -15,21 +15,24 @@ public class Space {
     private final String INIT_STATE_DEFAULT_FILENAME = "output/particles.txt";
     private final String NEIGHBOURS_DEFAULT_FILENAME = "output/neighbours.txt";
 
-    private Space(double height, double width, int particlesAmount, Double particleRadius) {
+    public Space(double size) {
+        this(size, size);
+    }
+
+    private Space(double height, double width) {
         this.height = height;
         this.width = width;
-        particles = new Particle[particlesAmount];
-        generateSystem(particlesAmount, particleRadius);
     }
 
     // Particles with random radiuses
-    public Space(double size, int particlesAmount) {
-        this(size, size, particlesAmount, null);
+    public void initialize(int particlesAmount) {
+        this.initialize(particlesAmount, null);
     }
 
     // Particles with defined constant radius
-    public Space(double size, int particlesAmount, double particleRadius) {
-        this(size, size, particlesAmount, particleRadius);
+    public void initialize(int particlesAmount, Double particleRadius) {
+        particles = new Particle[particlesAmount];
+        generateSystem(particlesAmount, particleRadius);
     }
 
     public void setCriticalRadius(double radius) {
@@ -39,8 +42,18 @@ public class Space {
     public void setRadiusLimits(double min, double max) {
         if (min < 0 || min > max)
             throw new RuntimeException("Invalid values for radius' limits");
-        minRadius = min;
-        maxRadius = max;
+        this.minRadius = min;
+        this.maxRadius = max;
+    }
+
+    private boolean overlaps(Particle p) {
+        for (int i = 0; i < particles.length; i++) {
+            if (particles[i] == null || particles[i].getIndex() == p.getIndex())
+                continue;
+            if (p.distanceTo(particles[i]) < 0)
+                return true;
+        }
+        return false;
     }
 
     private void generateSystem(int particlesAmount, Double particleRadius) {
@@ -48,7 +61,13 @@ public class Space {
         for (int i = 0; i < particlesAmount; i++) {
             double radius = (particleRadius == null) ? (rnd.nextDouble() * (maxRadius - minRadius) + minRadius)
                     : particleRadius;
-            particles[i] = new Particle(i, rnd.nextDouble() * width, rnd.nextDouble() * height, radius);
+            Particle p = new Particle(i, rnd.nextDouble() * width, rnd.nextDouble() * height, radius);
+            if (overlaps(p)) {
+                i--;
+                continue;
+            } else {
+                particles[i] = p;
+            }
         }
     }
 
