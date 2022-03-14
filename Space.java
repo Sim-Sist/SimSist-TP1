@@ -62,6 +62,10 @@ public class Space {
             double radius = (particleRadius == null) ? (rnd.nextDouble() * (maxRadius - minRadius) + minRadius)
                     : particleRadius;
             Particle p = new Particle(i, rnd.nextDouble() * width, rnd.nextDouble() * height, radius);
+            if (p.x < p.radius || (p.x + p.radius) > this.width || p.y < p.radius || (p.y + p.radius) > height) {
+                i--;
+                continue;
+            }
             if (overlaps(p)) {
                 i--;
                 continue;
