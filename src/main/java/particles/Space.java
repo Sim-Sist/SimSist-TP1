@@ -1,9 +1,13 @@
+package particles;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import particles.cim.CellIndexMethod;
 
 public class Space {
     private double height, width;
@@ -12,8 +16,8 @@ public class Space {
     private Set<Integer>[] neighbours;
     private final double DEFAULT_MIN_RADIUS = 1, DEFAULT_MAX_RADIUS = 10;
     private double minRadius = DEFAULT_MIN_RADIUS, maxRadius = DEFAULT_MAX_RADIUS;
-    private final String INIT_STATE_DEFAULT_FILENAME = "output/particles.txt";
-    private final String NEIGHBOURS_DEFAULT_FILENAME = "output/neighbours.txt";
+    private final String INIT_STATE_DEFAULT_FILENAME = "main/output/particles.txt";
+    private final String NEIGHBOURS_DEFAULT_FILENAME = "main/output/neighbours.txt";
 
     public Space(double size) {
         this(size, size);
@@ -161,7 +165,6 @@ public class Space {
         }
         return true;
     }
-
 
     @Override
     public String toString() {

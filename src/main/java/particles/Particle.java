@@ -1,3 +1,4 @@
+package particles;
 
 public class Particle {
     private int index;

@@ -1,3 +1,5 @@
+package particles;
+
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ public class Main {
     private static final double SIZE = 2;
     private static final int PARTICLES = 8;
     private static final double RADIUS = .2;
+
     public static void main(String[] args) {
         Space s = new Space(SIZE);
         s.setCriticalRadius(RADIUS);
@@ -46,7 +49,6 @@ public class Main {
         System.out.println("Performance with increasing particles for grid size of " + gridSize + ":");
         System.out.println("Particles   Elapsed Time");
         elapsedTimes.forEach((k, v) -> System.out.println(String.format("%9d   %12f", k, v)));
-
 
     }
 

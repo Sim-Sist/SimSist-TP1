@@ -1,9 +1,12 @@
+package particles.cim;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import particles.Particle;
 
 public class CellIndexMethod {
     private static boolean DEBUG = true;
@@ -16,7 +19,6 @@ public class CellIndexMethod {
     private static Set<Integer> setsProvider() {
         return new HashSet<>();
     }
-
 
     public static Set<Integer>[] apply(double size, double criticalRadius, Particle[] particles) {
         double maxRadius = Arrays.asList(particles).stream().mapToDouble(p -> p.radius).max().getAsDouble();
