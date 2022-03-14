@@ -17,9 +17,15 @@ public class CellIndexMethod {
         return new HashSet<>();
     }
 
-    @SuppressWarnings("unchecked")
     public static Set<Integer>[] apply(double size, double criticalRadius, Particle[] particles) {
-        gridSize = (int) Math.ceil(size / criticalRadius) + 1;
+        double maxRadius = Arrays.asList(particles).stream().mapToDouble(p -> p.radius).max().getAsDouble();
+        gridSize = (int) Math.ceil(size / (criticalRadius + maxRadius)) + 1; // ! TODO: check
+        return apply(size, criticalRadius, particles, gridSize);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Set<Integer>[] apply(double size, double criticalRadius, Particle[] particles, int grids) {
+        gridSize = grids;
 
         neighbours = (Set<Integer>[]) (new HashSet[particles.length]);
         Arrays.setAll(neighbours, (i) -> setsProvider());
@@ -51,7 +57,8 @@ public class CellIndexMethod {
                 System.out.println("\nIn Cell " + i + ":");
             int current = cells[i];
             while (current != -1) {
-                Integer[] candidates = getCandidates(i);
+                List<Integer> candidates = new ArrayList<>(Arrays.asList(getCandidates(i)));
+                candidates.remove((Integer) current);
                 if (DEBUG) {
                     StringBuilder str = new StringBuilder(String.format("For Particle %d candidates are: ", current));
                     for (int candidate : candidates) {
@@ -115,7 +122,7 @@ public class CellIndexMethod {
     private static double getDistance(Particle p1, Particle p2) {
         double deltaX = p1.x - p2.x;
         double deltaY = p1.y - p2.y;
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        return (Math.sqrt(deltaX * deltaX + deltaY * deltaY)) - (p1.radius + p2.radius);
     }
 
     private static int getCell(Particle particle, double size) {

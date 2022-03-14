@@ -2,11 +2,13 @@
 public class Particle {
     private int index;
     public double x, y;
+    public double radius;
 
-    public Particle(int index, double x, double y) {
+    public Particle(int index, double x, double y, double radius) {
         this.index = index;
         this.x = x;
         this.y = y;
+        this.radius = radius;
     }
 
     public int getIndex() {

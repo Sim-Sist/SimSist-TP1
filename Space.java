@@ -8,16 +8,56 @@ import java.util.Set;
 public class Space {
     private double height, width;
     private Particle[] particles;
-    private double criticalRadius = 10;
+    private double criticalRadius = 50;
     private Set<Integer>[] neighbours;
+    private final double DEFAULT_MIN_RADIUS = 1, DEFAULT_MAX_RADIUS = 10;
+    private double minRadius = DEFAULT_MIN_RADIUS, maxRadius = DEFAULT_MAX_RADIUS;
     private final String INIT_STATE_DEFAULT_FILENAME = "output/particles.txt";
     private final String NEIGHBOURS_DEFAULT_FILENAME = "output/neighbours.txt";
 
-    public Space(double height, double width, int particlesAmount) {
+    private Space(double height, double width, int particlesAmount, Double particleRadius) {
         this.height = height;
         this.width = width;
         particles = new Particle[particlesAmount];
-        generateSystem(particlesAmount);
+        generateSystem(particlesAmount, particleRadius);
+    }
+
+    // Particles with random radiuses
+    public Space(double size, int particlesAmount) {
+        this(size, size, particlesAmount, null);
+    }
+
+    // Particles with defined constant radius
+    public Space(double size, int particlesAmount, double particleRadius) {
+        this(size, size, particlesAmount, particleRadius);
+    }
+
+    public void setCriticalRadius(double radius) {
+        this.criticalRadius = radius;
+    }
+
+    public void setRadiusLimits(double min, double max) {
+        if (min < 0 || min > max)
+            throw new RuntimeException("Invalid values for radius' limits");
+        minRadius = min;
+        maxRadius = max;
+    }
+
+    private void generateSystem(int particlesAmount, Double particleRadius) {
+        Random rnd = new Random();
+        for (int i = 0; i < particlesAmount; i++) {
+            double radius = (particleRadius == null) ? (rnd.nextDouble() * (maxRadius - minRadius) + minRadius)
+                    : particleRadius;
+            particles[i] = new Particle(i, rnd.nextDouble() * width, rnd.nextDouble() * height, radius);
+        }
+    }
+
+    public void calculateCells() {
+        neighbours = CellIndexMethod.apply(height, criticalRadius, particles);
+    }
+
+    public void calculateCells(int gridSize) {
+        neighbours = CellIndexMethod.apply(height, criticalRadius, particles, gridSize);
     }
 
     public boolean outputInitialState() {
@@ -43,10 +83,10 @@ public class Space {
 
             /**
              * Body of textfile consists of one line for each particle
-             * with its xy coordinates separated by a space
+             * with its radius and then its xy coordinates, all separated by a spaces
              */
             for (Particle p : particles) {
-                fw.append(String.format("%f %f\n", p.x, p.y));
+                fw.append(String.format("%f %f %f\n", p.radius, p.x, p.y));
             }
 
             fw.close();
@@ -72,10 +112,8 @@ public class Space {
 
             /**
              * Header stile goes like:
-             * - The target cell to display its neighbours
              * - One free line to put a comment/name. This can also be left blank.
              */
-            fw.append(Integer.toString(defaultTarget)).append('\n');
             fw.append('\n');
 
             /**
@@ -87,7 +125,8 @@ public class Space {
                 for (Integer n : s) {
                     sb.append(n).append(" ");
                 }
-                sb.deleteCharAt(sb.length() - 1); // Delete last space
+                if (sb.length() > 0)
+                    sb.deleteCharAt(sb.length() - 1); // Delete last space
                 sb.append('\n');
                 fw.append(sb.toString());
             }
@@ -100,20 +139,6 @@ public class Space {
         return true;
     }
 
-    public Space(double size, int particlesAmount) {
-        this(size, size, particlesAmount);
-    }
-
-    private void generateSystem(int particlesAmount) {
-        Random rnd = new Random();
-        for (int i = 0; i < particlesAmount; i++) {
-            particles[i] = new Particle(i, rnd.nextDouble() * width, rnd.nextDouble() * height);
-        }
-    }
-
-    public void calculateCells() {
-        neighbours = CellIndexMethod.apply(height, criticalRadius, particles);
-    }
 
     @Override
     public String toString() {
