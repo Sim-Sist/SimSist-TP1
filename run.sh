@@ -1,4 +1,3 @@
-rm *.class
 javac Main.java
-java Main
+java -Xmx6G Main
 rm *.class
