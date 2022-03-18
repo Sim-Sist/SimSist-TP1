@@ -1,12 +1,12 @@
 # SimSist-TP1
 ```bash
-chmod +x run.sh
+chmod +x src/run.sh
 ```
 and then
 ```bash
-./run.sh
+./src/run.sh
 ```
-to generate output files in folder _output_
+to generate output files in folder _src/main/output_
 
 The output files have the following formats:
 
