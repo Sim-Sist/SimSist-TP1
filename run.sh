@@ -1,3 +1,2 @@
-javac Main.java
+javac *.java
 java -Xmx6G Main
-rm *.class

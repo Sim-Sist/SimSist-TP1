@@ -1,7 +1,5 @@
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -12,8 +10,10 @@ public class Space {
     private Set<Integer>[] neighbours;
     private final double DEFAULT_MIN_RADIUS = 1, DEFAULT_MAX_RADIUS = 10;
     private double minRadius = DEFAULT_MIN_RADIUS, maxRadius = DEFAULT_MAX_RADIUS;
+    private boolean outputTime = true;
     private final String INIT_STATE_DEFAULT_FILENAME = "output/particles.txt";
     private final String NEIGHBOURS_DEFAULT_FILENAME = "output/neighbours.txt";
+    private final String ELAPSED_TIME_FILENAME = "output/elapsed.txt";
 
     public Space(double size) {
         this(size, size);
@@ -75,12 +75,42 @@ public class Space {
         }
     }
 
+    public void setOutputElapsedTime(boolean value) {
+        this.outputTime = value;
+    }
+
     public void calculateCells() {
+        long start = System.nanoTime();
         neighbours = CellIndexMethod.apply(height, criticalRadius, particles);
+        long end = System.nanoTime();
+        if (outputTime)
+            outputExecutionTime(end - start);
     }
 
     public void calculateCells(int gridSize) {
+        long start = System.nanoTime();
         neighbours = CellIndexMethod.apply(height, criticalRadius, particles, gridSize);
+        long end = System.nanoTime();
+        if (outputTime)
+            outputExecutionTime(end - start);
+    }
+
+    private boolean outputExecutionTime(long nanos) {
+        FileWriter fw;
+        try {
+            fw = new FileWriter(ELAPSED_TIME_FILENAME);
+
+            fw.append("Elapsed time for Cell Index Method:\n");
+            fw.append(String.format("\t%d nanoseconds\n", nanos));
+            fw.append(String.format("\t%f miliseconds\n", nanos / Math.pow(10, 6)));
+            fw.append(String.format("\t%f seconds\n", nanos / Math.pow(10, 9)));
+
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public boolean outputInitialState() {
@@ -129,7 +159,6 @@ public class Space {
             return false;
         }
         FileWriter fw;
-        int defaultTarget = 1;
         try {
             fw = new FileWriter(filename);
 

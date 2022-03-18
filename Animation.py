@@ -23,14 +23,16 @@ def readNeighbours():
             yield line
 
 
+RESIZE_FACTOR = 30
+
 neighbours = readNeighbours()
 # Salto 1 lineas vacias
-# neighbours.__next__()
+neighbours.__next__()
 #
 info = readInfo()
 cantParticles = int(info.__next__())
-canvasSize = float(info.__next__())
-criticalRadio = float(info.__next__())
+canvasSize = float(info.__next__()) * RESIZE_FACTOR
+criticalRadio = float(info.__next__()) * RESIZE_FACTOR
 blancLine = info.__next__()
 
 radios = []
@@ -41,7 +43,7 @@ backgroundColor = "#212121"
 neighbourColor = "#29ACDA"
 
 L = canvasSize
-M = 10
+M = 10 * RESIZE_FACTOR
 RC = criticalRadio
 
 # PROVISIONAL
@@ -60,6 +62,7 @@ def getParticlesStaticInfo():
 
 # getParticlesStaticInfo() POR AHORA NO DEVOLVEMOS RADIOS
 
+
 def stringCompatible(str):
     if (len(str) > 0 and str != '\n'):
         return int(str)
@@ -75,20 +78,24 @@ def initializeParticle():
         numNeighLine = list(map(lambda str: stringCompatible(str), neighLine))
 
         # Aca tambien estaria la velocidad y eso cuando haga falta
-        position = [numInfoLine[0], numInfoLine[1]]
-        radio = numInfoLine[2]
+        position = [numInfoLine[1], numInfoLine[2]]
+        radio = numInfoLine[0]
         velocity = [0, 0]
-        yield Particle(index, position[0], position[1], velocity[0], velocity[1], 2 * radio, noSelectedColor, False, numNeighLine, False)
+        yield Particle(index, position[0], position[1], velocity[0],
+                       velocity[1], 2 * radio, noSelectedColor, False,
+                       numNeighLine, False)
 
 
 class Particle:
-    def __init__(self, id, x, y, vx, vy, d, color, active, neighbours, isNeighbour):
+
+    def __init__(self, id, x, y, vx, vy, d, color, active, neighbours,
+                 isNeighbour):
         self.id = id
-        self.x = x
-        self.y = y
+        self.x = x * RESIZE_FACTOR
+        self.y = y * RESIZE_FACTOR
         self.vx = vx
         self.vy = vy
-        self.d = d
+        self.d = d * RESIZE_FACTOR
         self.color = color
         self.active = active
         self.neighbours = neighbours
@@ -99,15 +106,19 @@ class Particle:
         fill(color)
         circle(self.x, self.y, self.d)
         fill('#ffffff')
-        text(str(self.id), self.x, self.y, )
+        text(
+            str(self.id),
+            self.x,
+            self.y,
+        )
 
     def draw(self):
 
-        if(self.active):
+        if (self.active):
             self.color = selectedColor
-            drawCriticalRadio(self.x, self.y)
+            drawCriticalRadio(self.x, self.y, self.d / 2)
         else:
-            if(self.isNeighbour):
+            if (self.isNeighbour):
                 self.color = neighbourColor
             else:
                 self.color = noSelectedColor
@@ -168,7 +179,8 @@ def mouse_pressed(event):
     deactivateAll()
 
     for particle in particles:
-        if(math.sqrt((event.x - particle.x)**2 + (event.y - particle.y)**2) < particle.d/2):
+        if (math.sqrt((event.x - particle.x)**2 +
+                      (event.y - particle.y)**2) < particle.d / 2):
             particle.activate()
             drawNeighbours(particle.neighbours)
         else:
@@ -176,11 +188,11 @@ def mouse_pressed(event):
     redraw()
 
 
-def drawCriticalRadio(x, y):
+def drawCriticalRadio(x, y, particle_radius):
     no_fill()
     stroke(selectedColor)
     stroke_weight(1)
-    circle(x, y, 2*RC)
+    circle(x, y, 2 * (RC + particle_radius))
 
 
 def drawGrid():
@@ -188,18 +200,18 @@ def drawGrid():
     stroke_weight(0.1)
 
     begin_shape()
-    width = int(L/M)
-    height = int(L/M)
+    width = int(L / M)
+    height = int(L / M)
 
     for i in range(height):
-        vertex(0,    i*M)
-        vertex(L, i*M)
-        vertex(0,    i*M)
+        vertex(0, i * M)
+        vertex(L, i * M)
+        vertex(0, i * M)
 
     for j in range(width):
-        vertex(j*M,    0)
-        vertex(j*M, L)
-        vertex(j*M,    0)
+        vertex(j * M, 0)
+        vertex(j * M, L)
+        vertex(j * M, 0)
 
     end_shape()
 
