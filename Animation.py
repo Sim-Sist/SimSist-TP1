@@ -55,7 +55,7 @@ RC = criticalRadio
 
 def getParticlesStaticInfo():
     index = 0
-    radiosLine = info.__next__().split(' ')
+    radiosLine = next(info).split(' ')
     for index in range(cantParticles):
         radios.append(float(radiosLine[index]))
 

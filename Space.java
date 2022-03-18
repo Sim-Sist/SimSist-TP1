@@ -80,11 +80,15 @@ public class Space {
     }
 
     public void calculateCells() {
-        long start = System.nanoTime();
-        neighbours = CellIndexMethod.apply(height, criticalRadius, particles);
-        long end = System.nanoTime();
+        long start = 0, end = 0;
         if (outputTime)
+            start = System.nanoTime();
+        neighbours = CellIndexMethod.apply(height, criticalRadius, particles);
+        if (outputTime)
+        {
+            end = System.nanoTime();
             outputExecutionTime(end - start);
+        }
     }
 
     public void calculateCells(int gridSize) {
@@ -93,6 +97,10 @@ public class Space {
         long end = System.nanoTime();
         if (outputTime)
             outputExecutionTime(end - start);
+    }
+
+    public void calculateCellsBruteForce() {
+        neighbours = BruteForceMethod.apply(particles, criticalRadius, height);
     }
 
     private boolean outputExecutionTime(long nanos) {

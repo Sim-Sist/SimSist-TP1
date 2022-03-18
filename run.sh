@@ -1,2 +1,2 @@
 javac *.java
-java -Xmx6G Main
+java -Xmx6G Main ${1}

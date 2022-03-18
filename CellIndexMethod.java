@@ -8,12 +8,12 @@ import java.util.function.BiFunction;
 
 public class CellIndexMethod {
     private static boolean DEBUG = false;
+    private static boolean periodicBoundary = true;
 
     private static int[] cells;
     private static int[] particleRefs;
     private static int gridSize;
     private static Set<Integer>[] neighbours;
-    private static boolean periodicBoundary = false;
     private static double spaceSize;
 
     private static Set<Integer> setsProvider() {
@@ -22,7 +22,7 @@ public class CellIndexMethod {
 
     public static Set<Integer>[] apply(double size, double criticalRadius, Particle[] particles) {
         double maxRadius = Arrays.asList(particles).stream().mapToDouble(p -> p.radius).max().getAsDouble();
-        gridSize = (int) Math.ceil(size / (criticalRadius + 2 * maxRadius)) + 1;
+        gridSize = (int) Math.floor(size / (criticalRadius + 2 * maxRadius));
         return apply(size, criticalRadius, particles, gridSize);
     }
 

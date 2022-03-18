@@ -28,7 +28,7 @@ public class Particle {
         if (!(o instanceof Particle))
             return false;
         Particle p = (Particle) o;
-        return p.x == x && p.y == y && p.index == index && p.radius == radius;
+        return p.x == this.x && p.y == this.y && p.index == this.index && p.radius == this.radius;
     }
 
     @Override
